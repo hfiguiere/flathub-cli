@@ -91,3 +91,12 @@ C-style comments. Some tooling reject these.
 
 Shall we run external commands or shall we try to integrate python in
 the Rust code.
+
+## Example
+
+```shell
+$ flathub-cli clone org.gnome.Devhelp
+...
+$ cd org.gnome.Devhelp
+$ flathub-cli build
+```
