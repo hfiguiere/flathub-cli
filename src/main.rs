@@ -1,6 +1,8 @@
 mod clone;
+mod cmd;
 mod error;
 mod flathub;
+mod repo;
 
 use clap::{Parser, Subcommand};
 
@@ -15,7 +17,7 @@ struct Args {
 #[derive(Subcommand)]
 enum Commands {
     /// Init a flatpak package repository.
-    Init,
+    Init(cmd::init::Args),
     /// Clone a flathub package.
     Clone(clone::Args),
     /// Build the package.
@@ -25,8 +27,8 @@ enum Commands {
     Lint,
     /// Clean build artifacts.
     Clean,
-    /// Add a module.
-    Add,
+    /// Manage modules.
+    Module,
     /// Configure `flathub-cli`
     Configure,
     /// Update `flathub-cli` configuration
@@ -38,6 +40,7 @@ enum Commands {
 fn main() -> Result<()> {
     let args = Args::parse();
     match args.command {
+        Commands::Init(args) => cmd::init::run(args),
         Commands::Clone(args) => clone::run(args),
         _ => {
             println!("Currently unimplemented.");
