@@ -56,6 +56,12 @@ Periodically it might alert the user that they are stale.
 The init command initialize the directory to host a new flathub
 package.
 
+```shell
+$ flathub-cli init org.flatpak.NewPackage
+Created org.flatpak.NewPackage.
+$ cd org.flatpak.NewPackage
+```
+
 It will create a file `flathub-project.toml` and `git init`.
 
 Optionally it can help creating a new manifest.

@@ -4,6 +4,8 @@ pub enum Error {
     InvalidArgument,
     #[error("Already exist")]
     AlreadyExist,
+    #[error("Not found")]
+    NotFound,
     #[error("IO error {0}")]
     IoError(#[from] std::io::Error),
     #[error("Git error {0}")]

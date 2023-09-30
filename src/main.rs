@@ -2,6 +2,7 @@ mod clone;
 mod cmd;
 mod error;
 mod flathub;
+mod project;
 mod repo;
 
 use clap::{Parser, Subcommand};
