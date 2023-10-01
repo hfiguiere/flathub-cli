@@ -1,4 +1,3 @@
-mod clone;
 mod cmd;
 mod error;
 mod flathub;
@@ -17,10 +16,12 @@ struct Args {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Init a flatpak package repository.
+    /// Init a flatpak project.
     Init(cmd::init::Args),
+    /// Manage manifest.
+    Manifest,
     /// Clone a flathub package.
-    Clone(clone::Args),
+    Clone(cmd::clone::Args),
     /// Build the package.
     Build,
     Submit,
@@ -34,15 +35,13 @@ enum Commands {
     Configure,
     /// Update `flathub-cli` configuration
     Update,
-    /// Create a manifest.
-    CreateManifest,
 }
 
 fn main() -> Result<()> {
     let args = Args::parse();
     match args.command {
         Commands::Init(args) => cmd::init::run(args),
-        Commands::Clone(args) => clone::run(args),
+        Commands::Clone(args) => cmd::clone::run(args),
         _ => {
             println!("Currently unimplemented.");
             Err(Error::InvalidArgument)
