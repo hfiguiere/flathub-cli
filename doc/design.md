@@ -74,6 +74,8 @@ directories.
 
 Clone a flathub repository by app-id.
 
+`--init` will eventually init the repo as well.
+
 ### Create manifest
 
 Will assist the user in creating a manifest. Something like

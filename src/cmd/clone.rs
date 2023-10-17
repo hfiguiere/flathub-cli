@@ -1,6 +1,7 @@
 use clap::Parser;
 
 use crate::flathub;
+use crate::project::Project;
 use crate::{Error, Result};
 
 #[derive(Parser)]
@@ -8,6 +9,9 @@ pub struct Args {
     #[arg(short, long)]
     /// Use ssh to clone.
     ssh: bool,
+    #[arg(long)]
+    /// Init if needed
+    init: bool,
     /// Package to clone. app-id or git repository.
     package: String,
 }
@@ -36,7 +40,10 @@ pub fn run(args: Args) -> Result<()> {
     if dest.try_exists()? {
         return Err(Error::AlreadyExist);
     }
-    let _repo = git2::Repository::clone(&url, &dest)?;
+    let repo = git2::Repository::clone(&url, &dest)?;
+    if args.init && !Project::exists(&dest) {
+        let _ = Project::create(&dest, dirname, true)?;
+    }
     println!("Cloned {package} into {dest:?}");
     Ok(())
 }
