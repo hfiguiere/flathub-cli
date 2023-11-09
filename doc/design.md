@@ -60,11 +60,12 @@ package.
 $ flathub-cli init org.flatpak.NewPackage
 Created org.flatpak.NewPackage.
 $ cd org.flatpak.NewPackage
+$ flathub-cli manifest create
 ```
 
 It will create a file `flathub-project.toml` and `git init`.
 
-Optionally it can help creating a new manifest.
+The it will interactively create a new manifest.
 
 It can only be run once for a specified directory. And should check
 based on git repository root for the presence of the config in parent
@@ -78,8 +79,9 @@ Clone a flathub repository by app-id.
 
 ### Create manifest
 
-Will assist the user in creating a manifest. Something like
-`flatpak-manifest-generator`.
+Will assist the user in creating a manifest.
+
+`flathub-cli create manifest` will create a manifest based on the app-id.
 
 ## Implementation
 

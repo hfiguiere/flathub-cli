@@ -1,6 +1,11 @@
+// SPDX-FileCopyrightText: 2023 Hubert Figuière
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 mod cmd;
 mod error;
 mod flathub;
+mod manifest;
 mod project;
 mod repo;
 
@@ -19,7 +24,7 @@ enum Commands {
     /// Init a flatpak project.
     Init(cmd::init::Args),
     /// Manage manifest.
-    Manifest,
+    Manifest(cmd::manifest::Args),
     /// Clone a flathub package.
     Clone(cmd::clone::Args),
     /// Build the package.
@@ -42,6 +47,7 @@ fn main() -> Result<()> {
     match args.command {
         Commands::Init(args) => cmd::init::run(args),
         Commands::Clone(args) => cmd::clone::run(args),
+        Commands::Manifest(args) => cmd::manifest::run(args),
         _ => {
             println!("Currently unimplemented.");
             Err(Error::InvalidArgument)

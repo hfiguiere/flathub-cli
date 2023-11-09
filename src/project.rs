@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2023 Hubert Figuière
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
@@ -19,7 +23,7 @@ pub(crate) struct Config {
 /// A Project is what lead to building a Flatpak.
 pub(crate) struct Project {
     /// The directory where the project is located.
-    path: PathBuf,
+    pub(crate) path: PathBuf,
     /// The configuration, as saved in `PROJECT_FILE`.
     config: Config,
 }
@@ -92,6 +96,10 @@ impl Project {
             path: dir.as_ref().to_path_buf(),
             config,
         })
+    }
+
+    pub fn id(&self) -> &str {
+        &self.config.id
     }
 
     fn create_project_file<P: AsRef<Path>>(&self, project_file: P) -> Result<()> {
