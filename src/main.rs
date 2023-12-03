@@ -27,6 +27,7 @@ enum Commands {
     Manifest(cmd::manifest::Args),
     /// Clone a flathub package.
     Clone(cmd::clone::Args),
+    /*
     /// Build the package.
     Build,
     Submit,
@@ -40,6 +41,7 @@ enum Commands {
     Configure,
     /// Update `flathub-cli` configuration
     Update,
+     */
 }
 
 fn main() -> Result<()> {
@@ -48,9 +50,5 @@ fn main() -> Result<()> {
         Commands::Init(args) => cmd::init::run(args),
         Commands::Clone(args) => cmd::clone::run(args),
         Commands::Manifest(args) => cmd::manifest::run(args),
-        _ => {
-            println!("Currently unimplemented.");
-            Err(Error::InvalidArgument)
-        }
     }
 }
