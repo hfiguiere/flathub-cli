@@ -6,7 +6,7 @@ use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
 use crate::repo;
-use crate::{Error, Result};
+use crate::{Error, ErrorContext, Result};
 use serde::{Deserialize, Serialize};
 
 const PROJECT_FILE: &str = "flathub-project.toml";
@@ -54,10 +54,10 @@ impl Project {
         P: AsRef<Path>,
     {
         if !existing && Self::exists(&dir) {
-            return Err(Error::AlreadyExist);
+            return Err(Error::AlreadyExist(ErrorContext::Project));
         }
         if !existing && (dir.as_ref().try_exists()? && repo::check_repo_exist(&dir)) {
-            return Err(Error::AlreadyExist);
+            return Err(Error::AlreadyExist(ErrorContext::Repository));
         }
         let mut manifest = String::from(project_id);
         manifest.push_str(".json");

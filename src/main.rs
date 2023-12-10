@@ -11,7 +11,7 @@ mod repo;
 
 use clap::{Parser, Subcommand};
 
-use error::{Error, Result};
+use error::{Context as ErrorContext, Error, Result};
 
 #[derive(Parser)]
 struct Args {

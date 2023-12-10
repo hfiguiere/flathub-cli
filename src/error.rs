@@ -2,12 +2,37 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+/// An error context.
+#[derive(Debug)]
+pub enum Context {
+    /// Error relate to diretory (of the project)
+    Directory,
+    /// Error relate to project file
+    Project,
+    /// Error relate to git repository
+    Repository,
+}
+
+impl std::fmt::Display for Context {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Directory => "Directory",
+                Self::Project => "Project",
+                Self::Repository => "Repository",
+            }
+        )
+    }
+}
+
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error("Invalid argument")]
     InvalidArgument,
-    #[error("Already exist")]
-    AlreadyExist,
+    #[error("{0} already exist")]
+    AlreadyExist(Context),
     #[error("Not found")]
     NotFound,
     #[error("Manifest error")]

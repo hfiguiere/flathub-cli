@@ -1,8 +1,12 @@
+// SPDX-FileCopyrightText: 2023 Hubert Figuière
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 use clap::Parser;
 
 use crate::flathub;
 use crate::project::Project;
-use crate::{Error, Result};
+use crate::{Error, ErrorContext, Result};
 
 #[derive(Parser)]
 pub struct Args {
@@ -29,7 +33,7 @@ pub fn run(args: Args) -> Result<()> {
         if let Some((_, dir)) = package.rsplit_once('/') {
             (package.to_owned(), dir)
         } else {
-            return Err(Error::AlreadyExist);
+            return Err(Error::AlreadyExist(ErrorContext::Directory));
         }
     } else {
         let url = flathub::repo_for_package(package);
@@ -38,7 +42,7 @@ pub fn run(args: Args) -> Result<()> {
     let current_dir = std::env::current_dir()?;
     let dest = current_dir.join(dirname);
     if dest.try_exists()? {
-        return Err(Error::AlreadyExist);
+        return Err(Error::AlreadyExist(ErrorContext::Directory));
     }
     let repo = git2::Repository::clone(&url, &dest)?;
     if args.init && !Project::exists(&dest) {
