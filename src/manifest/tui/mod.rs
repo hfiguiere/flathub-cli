@@ -82,7 +82,7 @@ impl Prompt for SdkExtension {
             .interact()
             .ok()
             .and_then(|selection| match selection {
-                1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 => prompt_sdk_ext_version(selection),
+                1..=11 => prompt_sdk_ext_version(selection),
                 _ => None,
             })
     }
@@ -178,7 +178,7 @@ impl Prompt for Runtime {
             .ok()
             .and_then(|selection| {
                 match selection {
-                    0 | 1 | 2 | 3 => prompt_runtime_version(selection),
+                    0..=3 => prompt_runtime_version(selection),
                     4 =>
                     // prompt other runtime
                     {
@@ -211,7 +211,7 @@ impl Prompt for Sdk {
             .interact()
             .ok()
             .and_then(|selection| match selection {
-                0 | 1 | 2 | 3 => prompt_sdk_version(selection),
+                0..=3 => prompt_sdk_version(selection),
                 _ => None,
             })
     }
