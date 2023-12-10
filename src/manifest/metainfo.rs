@@ -7,13 +7,13 @@ use std::path::Path;
 
 use xmlwriter::*;
 
-use crate::manifest::Manifest;
+use crate::{manifest::Manifest, Result};
 
-pub fn generate(manifest: &Manifest, dest_dir: &Path) -> Result<(), std::io::Error> {
+pub fn generate(manifest: &Manifest, dest_dir: &Path) -> Result<std::path::PathBuf> {
     let mut metainfo_file = dest_dir.to_path_buf();
     metainfo_file.push(format!("{}.metainfo.xml", &manifest.id));
 
-    let mut file = std::fs::File::create(metainfo_file)?;
+    let mut file = std::fs::File::create(&metainfo_file)?;
 
     let mut w = XmlWriter::new(Options::default());
     w.write_declaration();
@@ -71,5 +71,5 @@ pub fn generate(manifest: &Manifest, dest_dir: &Path) -> Result<(), std::io::Err
 
     file.write_all(w.end_document().as_bytes())?;
 
-    Ok(())
+    Ok(metainfo_file)
 }

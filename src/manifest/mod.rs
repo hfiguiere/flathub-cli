@@ -13,6 +13,7 @@ use dialoguer::Input;
 use serde::Serialize;
 use serde_json::json;
 
+use crate::{repo, Result};
 use module::ModuleEntry;
 use tui::Prompt;
 
@@ -130,26 +131,39 @@ impl Manifest {
         }
     }
 
-    pub fn generate<P: AsRef<std::path::Path>>(self, dest: P) -> Result<(), std::io::Error> {
+    /// Generate the manifest files and surroundings in the `repo`.
+    ///
+    /// Returns the path of the generated manifest.
+    pub fn generate<P: AsRef<std::path::Path>>(
+        self,
+        repo: &git2::Repository,
+        dest: P,
+    ) -> Result<()> {
         let dest_dir = std::path::PathBuf::from(dest.as_ref());
 
         let mut manifest_file = dest_dir.clone();
         manifest_file.push(format!("{}.json", &self.id));
 
         if self.is_extension() {
-            metainfo::generate(&self, &dest_dir)?;
+            let metainfo_file = metainfo::generate(&self, &dest_dir)?;
+
+            repo::add_path_to_repo(repo, metainfo_file)?;
+
             let flathub = flathub::Flathub {
                 skip_icons_check: true,
             };
-            flathub.generate(&dest_dir)?;
+            let flathub_file = flathub.generate(&dest_dir)?;
+            repo::add_path_to_repo(repo, flathub_file)?;
         }
 
         let data: serde_json::Value = self.into();
 
-        let file = std::fs::File::create(manifest_file)?;
+        let file = std::fs::File::create(&manifest_file)?;
         let formatter = serde_json::ser::PrettyFormatter::with_indent(b"    ");
         let mut serializer = serde_json::Serializer::with_formatter(file, formatter);
         data.serialize(&mut serializer)?;
+
+        repo::add_path_to_repo(repo, &manifest_file)?;
 
         Ok(())
     }

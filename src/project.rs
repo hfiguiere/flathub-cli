@@ -98,6 +98,13 @@ impl Project {
         })
     }
 
+    /// Return the repo for the project.
+    pub fn repo(&self) -> Result<git2::Repository> {
+        let repo = git2::Repository::init(&self.path)?;
+
+        Ok(repo)
+    }
+
     pub fn id(&self) -> &str {
         &self.config.id
     }

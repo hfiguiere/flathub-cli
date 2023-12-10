@@ -45,6 +45,8 @@ pub enum Error {
     TomlSer(#[from] toml::ser::Error),
     #[error("Toml deserialization error {0}")]
     TomlDe(#[from] toml::de::Error),
+    #[error("Serde JSON error {0}")]
+    SerdeJson(#[from] serde_json::Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

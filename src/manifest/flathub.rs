@@ -9,7 +9,11 @@ pub struct Flathub {
 }
 
 impl Flathub {
-    pub fn generate(&self, dest_dir: &std::path::Path) -> Result<(), std::io::Error> {
+    /// Generate the flathub.json file and return its path.
+    pub fn generate(
+        &self,
+        dest_dir: &std::path::Path,
+    ) -> Result<std::path::PathBuf, std::io::Error> {
         let mut flathub_file = dest_dir.to_path_buf();
         flathub_file.push("flathub.json");
 
@@ -18,9 +22,9 @@ impl Flathub {
             j["skip-icons-check"] = json!(self.skip_icons_check);
         }
 
-        let mut file = std::fs::File::create(flathub_file)?;
+        let mut file = std::fs::File::create(&flathub_file)?;
         serde_json::to_writer_pretty(&mut file, &j)?;
 
-        Ok(())
+        Ok(flathub_file)
     }
 }

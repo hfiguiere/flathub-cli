@@ -19,7 +19,9 @@ fn create_manifest() -> Result<()> {
     let project = Project::open(current_dir)?;
 
     let manifest = manifest::Manifest::prompt_with_id(Some(project.id())).ok_or(Error::Manifest)?;
-    manifest.generate(project.path)?;
+
+    let repo = project.repo()?;
+    manifest.generate(&repo, project.path)?;
 
     Ok(())
 }
