@@ -113,6 +113,7 @@ pub struct Manifest {
     pub(crate) sdk: Sdk,
     pub sdk_extensions: Vec<SdkExtension>,
     pub(crate) modules: Vec<ModuleEntry>,
+    need_shared_modules: bool,
 }
 
 impl Manifest {
@@ -156,6 +157,7 @@ impl Manifest {
             repo::add_path_to_repo(repo, flathub_file)?;
         }
 
+        let need_shared_modules = self.need_shared_modules;
         let data: serde_json::Value = self.into();
 
         let file = std::fs::File::create(&manifest_file)?;
@@ -164,6 +166,13 @@ impl Manifest {
         data.serialize(&mut serializer)?;
 
         repo::add_path_to_repo(repo, &manifest_file)?;
+        if need_shared_modules {
+            repo::add_submodule_to_repo(
+                repo,
+                crate::flathub::SHARED_MODULES_REPO,
+                crate::flathub::SHARED_MODULES,
+            )?;
+        }
 
         Ok(())
     }
@@ -225,9 +234,13 @@ impl Manifest {
             format!("{base_id}{short_id}")
         };
 
+        let mut need_shared_modules = false;
         let mut modules = vec![];
         while let Some(module) = ModuleEntry::prompt() {
-            modules.push(module)
+            if matches!(module, ModuleEntry::SharedModule(_)) {
+                need_shared_modules = true;
+            }
+            modules.push(module);
         }
 
         match package_type {
@@ -248,6 +261,7 @@ impl Manifest {
             sdk,
             sdk_extensions,
             modules,
+            need_shared_modules,
         })
     }
 }

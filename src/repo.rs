@@ -34,3 +34,15 @@ where
 
     Ok(())
 }
+
+pub(crate) fn add_submodule_to_repo<P>(repo: &git2::Repository, url: &str, path: P) -> Result<()>
+where
+    P: AsRef<std::path::Path>,
+{
+    let mut submodule = repo.submodule(url, path.as_ref(), false)?;
+    let _ = submodule.open()?;
+    submodule.clone(None)?;
+    submodule.add_finalize()?;
+
+    Ok(())
+}

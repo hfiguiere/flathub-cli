@@ -7,14 +7,14 @@ use serde_json::json;
 
 #[derive(Clone, Debug)]
 pub(crate) enum ModuleEntry {
-    Include(String),
+    SharedModule(String),
     Module(Module),
 }
 
 impl From<&ModuleEntry> for serde_json::Value {
     fn from(entry: &ModuleEntry) -> serde_json::Value {
         match entry {
-            ModuleEntry::Include(s) => json!(s),
+            ModuleEntry::SharedModule(s) => json!(s),
             ModuleEntry::Module(m) => json!(m),
         }
     }

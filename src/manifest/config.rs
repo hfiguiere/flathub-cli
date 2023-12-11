@@ -48,23 +48,23 @@ lazy_static::lazy_static! {
         HashMap::from([
             (
                 "gtk2",
-                ModuleEntry::Include("shared-modules/gtk2/gtk2.json".into()),
+                ModuleEntry::SharedModule("shared-modules/gtk2/gtk2.json".into()),
             ),
             (
                 "python 2.7",
-                ModuleEntry::Include("shared-modules/python2.7/python-2.7.json".into()),
+                ModuleEntry::SharedModule("shared-modules/python2.7/python-2.7.json".into()),
             ),
             (
                 "lv2",
-                ModuleEntry::Include("shared-modules/linux-audio/lv2.json".into()),
+                ModuleEntry::SharedModule("shared-modules/linux-audio/lv2.json".into()),
             ),
             (
                 "fftw3f",
-                ModuleEntry::Include("shared-modules/linux-audio/fftw3f.json".into()),
+                ModuleEntry::SharedModule("shared-modules/linux-audio/fftw3f.json".into()),
             ),
             (
                 "fftw3f-static",
-                ModuleEntry::Include("shared-modules/linux-audio/fftw3f-static.json".into()),
+                ModuleEntry::SharedModule("shared-modules/linux-audio/fftw3f-static.json".into()),
             ),
             ("fltk", ModuleEntry::Module(fltk_module())),
         ])
