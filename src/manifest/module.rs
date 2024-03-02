@@ -82,7 +82,7 @@ impl Module {
         let metainfo = format!("{id}.metainfo.xml");
         self.post_install = Some(vec![
             format!(
-                "install -Dm644 {} -t=${{FLATPAK_DEST}}/share/metainfo",
+                "install -Dm644 {} -t ${{FLATPAK_DEST}}/share/metainfo",
                 &metainfo
             ),
             "appstream-compose --basename=${FLATPAK_ID} --prefix=${FLATPAK_DEST} --origin=flatpak ${FLATPAK_ID}".to_string()
