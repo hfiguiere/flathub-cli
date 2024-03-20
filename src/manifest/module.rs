@@ -88,7 +88,7 @@ impl Module {
                 "install -Dm644 {} -t ${{FLATPAK_DEST}}/share/metainfo",
                 &metainfo
             ),
-            "appstream-compose --basename=${FLATPAK_ID} --prefix=${FLATPAK_DEST} --origin=flatpak ${FLATPAK_ID}".to_string()
+            "appstreamcli compose --components=${FLATPAK_ID} --prefix=/ --origin=${FLATPAK_ID} --result-root=${FLATPAK_DEST} --data-dir=${FLATPAK_DEST}/share/app-info/xmls ${FLATPAK_DEST}".to_string()
         ]);
         self.sources.push(Source {
             type_: SourceType::File,
