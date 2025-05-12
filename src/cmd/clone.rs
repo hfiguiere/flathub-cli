@@ -16,7 +16,7 @@ pub struct Args {
     #[arg(long)]
     /// Init if needed
     init: bool,
-    /// Package to clone. app-id or git repository.
+    /// Package to clone. id or git repository.
     package: String,
 }
 

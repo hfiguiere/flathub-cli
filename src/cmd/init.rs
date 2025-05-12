@@ -14,8 +14,8 @@ pub struct Args {
     #[arg(long, help = "Initialize project even if git repository exists")]
     /// Initialize if existing.
     existing: bool,
-    #[arg(short, long, help = "The app-id. Otherwise it is extrapolated")]
-    /// The app-id.
+    #[arg(short, long, help = "The application id. Otherwise it is extrapolated")]
+    /// The application id.
     id: Option<String>,
     /// Path
     path: String,

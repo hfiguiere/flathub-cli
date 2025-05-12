@@ -14,7 +14,7 @@ const PROJECT_FILE: &str = "flathub-project.toml";
 #[derive(Deserialize, Serialize)]
 /// The config data of the project.
 pub(crate) struct Config {
-    /// The app-id.
+    /// The package id.
     id: String,
     /// The path to the manifest relative to the project.
     manifest: String,
