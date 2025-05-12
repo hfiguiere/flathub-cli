@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2020-2023 Hubert Figuière
+// SPDX-FileCopyrightText: 2020-2025 Hubert Figuière
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -18,20 +18,20 @@ pub enum SdkExtension {
     Gcc(String),
 }
 
-impl ToString for SdkExtension {
-    fn to_string(&self) -> String {
+impl std::fmt::Display for SdkExtension {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Rust => "org.freedesktop.Sdk.Extension.rust-stable".to_owned(),
-            Self::RustNightly => "org.freedesktop.Sdk.Extension.rust-nightly".to_owned(),
-            Self::Java(s) => format!("org.freedesktop.Sdk.Extension.openjdk{s}"),
-            Self::Node(s) => format!("org.freedesktop.Sdk.Extension.node{s}"),
-            Self::Php(s) => format!("org.freedesktop.Sdk.Extension.php{s}"),
-            Self::GoLang => "org.freedesktop.Sdk.Extension.golang".to_owned(),
-            Self::TexLive => "org.freedesktop.Sdk.Extension.texlive".to_owned(),
-            Self::Llvm(s) => format!("org.freedesktop.Sdk.Extension.llvm{s}"),
-            Self::DotNet(s) => format!("org.freedesktop.Sdk.Extension.dotnet{s}"),
-            Self::Mono(s) => format!("org.freedesktop.Sdk.Extension.mono{s}"),
-            Self::Gcc(s) => format!("org.freedesktop.Sdk.Extension.gcc{s}"),
+            Self::Rust => write!(f, "org.freedesktop.Sdk.Extension.rust-stable"),
+            Self::RustNightly => write!(f, "org.freedesktop.Sdk.Extension.rust-nightly"),
+            Self::Java(s) => write!(f, "org.freedesktop.Sdk.Extension.openjdk{s}"),
+            Self::Node(s) => write!(f, "org.freedesktop.Sdk.Extension.node{s}"),
+            Self::Php(s) => write!(f, "org.freedesktop.Sdk.Extension.php{s}"),
+            Self::GoLang => write!(f, "org.freedesktop.Sdk.Extension.golang"),
+            Self::TexLive => write!(f, "org.freedesktop.Sdk.Extension.texlive"),
+            Self::Llvm(s) => write!(f, "org.freedesktop.Sdk.Extension.llvm{s}"),
+            Self::DotNet(s) => write!(f, "org.freedesktop.Sdk.Extension.dotnet{s}"),
+            Self::Mono(s) => write!(f, "org.freedesktop.Sdk.Extension.mono{s}"),
+            Self::Gcc(s) => write!(f, "org.freedesktop.Sdk.Extension.gcc{s}"),
         }
     }
 }

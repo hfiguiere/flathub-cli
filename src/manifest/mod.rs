@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2020-2023 Hubert Figuière
+// SPDX-FileCopyrightText: 2020-2025 Hubert Figuière
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -52,13 +52,13 @@ impl Default for Sdk {
     }
 }
 
-impl std::string::ToString for Sdk {
-    fn to_string(&self) -> String {
+impl std::fmt::Display for Sdk {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Freedesktop(s) => format!("org.freedesktop.Sdk//{s}"),
-            Self::Gnome(s) => format!("org.gnome.Sdk//{s}"),
-            Self::Kde(s) => format!("org.kde.Sdk//{s}"),
-            Self::Qt6(s) => format!("org.kde.Sdk//{s}"),
+            Self::Freedesktop(s) => write!(f, "org.freedesktop.Sdk//{s}"),
+            Self::Gnome(s) => write!(f, "org.gnome.Sdk//{s}"),
+            Self::Kde(s) => write!(f, "org.kde.Sdk//{s}"),
+            Self::Qt6(s) => write!(f, "org.kde.Sdk//{s}"),
         }
     }
 }
@@ -74,9 +74,9 @@ pub enum Runtime {
     Other(String, String),
 }
 
-impl std::string::ToString for Runtime {
-    fn to_string(&self) -> String {
-        format!("{}//{}", self.to_string_name(), self.to_string_version())
+impl std::fmt::Display for Runtime {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}//{}", self.to_string_name(), self.to_string_version())
     }
 }
 
@@ -228,7 +228,7 @@ impl Manifest {
             id.to_string()
         } else {
             short_id = Input::new()
-                .with_prompt(&format!("Package ID {base_id}"))
+                .with_prompt(format!("Package ID {base_id}"))
                 .interact()
                 .unwrap();
             format!("{base_id}{short_id}")

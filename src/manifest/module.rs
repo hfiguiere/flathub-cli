@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2020-2023 Hubert Figuière
+// SPDX-FileCopyrightText: 2020-2025 Hubert Figuière
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -29,15 +29,18 @@ pub(crate) enum SourceType {
     File,
 }
 
-impl ToString for SourceType {
-    fn to_string(&self) -> String {
-        match *self {
-            SourceType::Archive => "archive",
-            SourceType::Git => "git",
-            SourceType::Patch => "patch",
-            SourceType::File => "file",
-        }
-        .into()
+impl std::fmt::Display for SourceType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match *self {
+                SourceType::Archive => "archive",
+                SourceType::Git => "git",
+                SourceType::Patch => "patch",
+                SourceType::File => "file",
+            }
+        )
     }
 }
 

@@ -38,7 +38,7 @@ pub enum Error {
     #[error("Manifest error")]
     Manifest,
     #[error("IO error {0}")]
-    IoError(#[from] std::io::Error),
+    Io(#[from] std::io::Error),
     #[error("Git error {0}")]
     Git(#[from] git2::Error),
     #[error("Toml serialization error {0}")]
