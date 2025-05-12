@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 Hubert Figuière
+// SPDX-FileCopyrightText: 2023-2025 Hubert Figuière
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -6,10 +6,10 @@ use std::collections::HashMap;
 
 use super::module::{Module, ModuleEntry, Source, SourceType};
 
-pub(crate) const FREEDESKTOP_VERSION: &str = "23.08";
-pub(crate) const GNOME_VERSION: &str = "45";
-pub(crate) const KDE_VERSION: &str = "5.15-23.08";
-pub(crate) const QT6_VERSION: &str = "6.6";
+pub(crate) const FREEDESKTOP_VERSION: &str = "24.08";
+pub(crate) const GNOME_VERSION: &str = "47";
+pub(crate) const KDE_VERSION: &str = "5.15-24.08";
+pub(crate) const QT6_VERSION: &str = "6.9";
 pub(crate) const GIMP_PLUGIN_VERSION: &str = "2-40";
 
 fn fltk_module() -> Module {
