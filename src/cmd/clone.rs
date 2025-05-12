@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 Hubert Figuière
+// SPDX-FileCopyrightText: 2023-2025 Hubert Figuière
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -33,7 +33,7 @@ pub fn run(args: Args) -> Result<()> {
         if let Some((_, dir)) = package.rsplit_once('/') {
             (package.to_owned(), dir)
         } else {
-            return Err(Error::AlreadyExist(ErrorContext::Directory));
+            return Err(Error::InvalidArgument);
         }
     } else {
         let url = flathub::repo_for_package(package);
