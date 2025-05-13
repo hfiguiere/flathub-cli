@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 Hubert Figuière
+// SPDX-FileCopyrightText: 2023-2025 Hubert Figuière
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -29,6 +29,6 @@ fn create_manifest() -> Result<()> {
 pub fn run(args: Args) -> Result<()> {
     match args.command.as_str() {
         "create" => create_manifest(),
-        _ => Err(Error::InvalidArgument),
+        _ => Err(Error::InvalidArgument.into()),
     }
 }

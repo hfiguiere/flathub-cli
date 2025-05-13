@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 Hubert Figuière
+// SPDX-FileCopyrightText: 2023-2025 Hubert Figuière
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -54,10 +54,10 @@ impl Project {
         P: AsRef<Path>,
     {
         if !existing && Self::exists(&dir) {
-            return Err(Error::AlreadyExist(ErrorContext::Project));
+            return Err(Error::AlreadyExist(ErrorContext::Project).into());
         }
         if !existing && (dir.as_ref().try_exists()? && repo::check_repo_exist(&dir)) {
-            return Err(Error::AlreadyExist(ErrorContext::Repository));
+            return Err(Error::AlreadyExist(ErrorContext::Repository).into());
         }
         let mut manifest = String::from(project_id);
         manifest.push_str(".json");
@@ -88,7 +88,7 @@ impl Project {
         P: AsRef<Path>,
     {
         if !Self::exists(&dir) {
-            return Err(Error::NotFound);
+            return Err(Error::NotFound.into());
         }
         let project_file = dir.as_ref().join(PROJECT_FILE);
         let config = Self::load_config(&project_file)?;

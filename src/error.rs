@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 Hubert Figuière
+// SPDX-FileCopyrightText: 2023-2025 Hubert Figuière
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -49,4 +49,4 @@ pub enum Error {
     SerdeJson(#[from] serde_json::Error),
 }
 
-pub type Result<T> = std::result::Result<T, Error>;
+pub type Result<T> = anyhow::Result<T>;
