@@ -126,4 +126,8 @@ impl Project {
 
         Ok(config)
     }
+
+    pub fn manifest_file(&self) -> PathBuf {
+        PathBuf::from(&self.config.manifest)
+    }
 }

@@ -37,6 +37,8 @@ pub enum Error {
     NotFound,
     #[error("Manifest error")]
     Manifest,
+    #[error("Not implemented")]
+    NotImplemented,
     #[error("IO error {0}")]
     Io(#[from] std::io::Error),
     #[error("Git error {0}")]

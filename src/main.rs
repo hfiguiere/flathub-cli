@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+mod builder;
 mod cmd;
 mod error;
 mod flathub;
@@ -33,8 +34,10 @@ enum Commands {
     Submit,
     /// Run the linter without building.
     Lint,
-    /// Clean build artifacts.
-    Clean,
+    */
+    /// Cleanup build artifacts.
+    Cleanup(cmd::cleanup::Args),
+    /*
     /// Manage modules.
     Module,
     /// Configure `flathub-cli`
@@ -48,6 +51,7 @@ fn main() -> Result<()> {
     let args = Args::parse();
     match args.command {
         Commands::Init(args) => cmd::init::run(args),
+        Commands::Cleanup(args) => cmd::cleanup::run(args),
         Commands::Clone(args) => cmd::clone::run(args),
         Commands::Manifest(args) => cmd::manifest::run(args),
     }
