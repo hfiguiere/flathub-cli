@@ -145,9 +145,14 @@ fn build_download_path(current_dir: &Path, name: &str, sha: &str) -> PathBuf {
 fn declared_sources(project: &Project) -> Result<Vec<JsonValue>> {
     let manifest_file = project.manifest_file().to_string_lossy().to_string();
     // Parse manifest
-    let manifest_text = builder::run(&["--show-manifest", &manifest_file])?;
+    let manifest_text =
+        builder::run(&["--show-manifest", &manifest_file]).context("show manifest")?;
+    if manifest_text.is_empty() {
+        return Err(anyhow!("Empty manifest"));
+    }
     // List all download. Mark them in the existing list
-    let manifest: JsonValue = serde_json::from_slice(&manifest_text)?;
+    let manifest: JsonValue = serde_json::from_slice(&manifest_text)
+        .with_context(|| format!("parsing manifest: {manifest_text:?}"))?;
     manifest
         .get("modules")
         .ok_or(Error::NotFound.into())
