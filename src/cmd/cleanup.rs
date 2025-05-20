@@ -16,13 +16,17 @@ use crate::{Error, Result};
 
 #[derive(Parser)]
 pub struct Args {
+    /// Dry-run: do not remove anything.
     #[arg(short = 'n', long)]
     dry_run: bool,
-    /// Subcommand
+    /// Verbose
+    #[arg(short = 'v', long)]
+    verbose: bool,
+    /// Subcommand: "downloads"
     command: String,
 }
 
-fn cleanup_downloads(dry_run: bool) -> Result<()> {
+fn cleanup_downloads(dry_run: bool, verbose: bool) -> Result<()> {
     let current_dir = std::env::current_dir().context("Get current dir")?;
     let project = Project::open(&current_dir).context("Open project")?;
 
@@ -48,7 +52,10 @@ fn cleanup_downloads(dry_run: bool) -> Result<()> {
                         if !path.is_file() {
                             continue;
                         }
-                        //println!("adding {name:?} with {path:?}");
+                        if verbose {
+                            let path = path.strip_prefix(&current_dir)?;
+                            println!("Found {path:?} (checksum {name:?})");
+                        }
                         downloads.insert(name.to_owned(), path.canonicalize().unwrap());
                     }
                 }
@@ -102,16 +109,25 @@ fn cleanup_downloads(dry_run: bool) -> Result<()> {
         total_size += metadata.len();
         if dry_run {
             // display what to do
-            println!("Would delete {:?}", download.1);
+            let path = download.1.strip_prefix(&current_dir)?;
+            println!("Would delete {:?}", path);
         } else {
             // remove
-            println!("Deleting {:?}", download.1);
+            if verbose {
+                let path = download.1.strip_prefix(&current_dir)?;
+                println!("Deleting {:?}", path);
+            }
             std::fs::remove_file(download.1)?;
         }
     }
     if dry_run {
         println!(
-            "Would have saved {}",
+            "Would have saved {}.",
+            humanize_bytes::humanize_bytes_decimal!(total_size)
+        );
+    } else if verbose {
+        println!(
+            "Deleted {}.",
             humanize_bytes::humanize_bytes_decimal!(total_size)
         );
     }
@@ -168,7 +184,7 @@ fn all_sources_from_modules(modules: &JsonValue) -> Result<Vec<JsonValue>> {
 pub fn run(args: Args) -> Result<()> {
     let command = args.command.as_str();
     match command {
-        "downloads" => cleanup_downloads(args.dry_run),
+        "downloads" => cleanup_downloads(args.dry_run, args.verbose),
         _ => Err(Error::InvalidArgument.into()),
     }
 }
