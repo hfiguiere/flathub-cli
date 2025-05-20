@@ -49,6 +49,18 @@ impl Project {
         true
     }
 
+    pub fn find_manifest(project_id: &str) -> Result<String> {
+        for ext in [".json", ".yaml", ".yml"] {
+            let mut manifest = String::from(project_id);
+            manifest.push_str(ext);
+            let path = Path::new(&manifest);
+            if path.exists() {
+                return Ok(manifest);
+            }
+        }
+        Err(Error::NotFound.into())
+    }
+
     pub fn create<P>(dir: P, project_id: &str, existing: bool) -> Result<Self>
     where
         P: AsRef<Path>,
@@ -59,8 +71,13 @@ impl Project {
         if !existing && (dir.as_ref().try_exists()? && repo::check_repo_exist(&dir)) {
             return Err(Error::AlreadyExist(ErrorContext::Repository).into());
         }
-        let mut manifest = String::from(project_id);
-        manifest.push_str(".json");
+        let manifest = if existing {
+            Self::find_manifest(project_id)?
+        } else {
+            let mut manifest = String::from(project_id);
+            manifest.push_str(".json");
+            manifest
+        };
         let config = Config {
             id: project_id.to_string(),
             manifest,
@@ -73,12 +90,14 @@ impl Project {
         let project_file = dir.as_ref().join(PROJECT_FILE);
         proj.create_project_file(project_file)?;
 
-        // Create the git repo
-        let repo = git2::Repository::init(&dir)?;
-        let mut index = repo.index()?;
-        // Add the project file to the repo.
-        index.add_path(&PathBuf::from(PROJECT_FILE))?;
-        index.write()?;
+        if !existing {
+            // Create the git repo
+            let repo = git2::Repository::init(&dir)?;
+            let mut index = repo.index()?;
+            // Add the project file to the repo.
+            index.add_path(&PathBuf::from(PROJECT_FILE))?;
+            index.write()?;
+        }
 
         Ok(proj)
     }
