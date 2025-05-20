@@ -10,14 +10,24 @@ use crate::{Error, ErrorContext, Result};
 use serde::{Deserialize, Serialize};
 
 const PROJECT_FILE: &str = "flathub-project.toml";
+const CONFIG_VERSION: &str = "0.9";
 
 #[derive(Deserialize, Serialize)]
 /// The config data of the project.
 pub(crate) struct Config {
+    /// Version of the config. If missing assume default.
+    #[serde(default = "Config::default_version")]
+    version: String,
     /// The package id.
     id: String,
     /// The path to the manifest relative to the project.
     manifest: String,
+}
+
+impl Config {
+    fn default_version() -> String {
+        CONFIG_VERSION.to_string()
+    }
 }
 
 /// A Project is what lead to building a Flatpak.
@@ -79,6 +89,7 @@ impl Project {
             manifest
         };
         let config = Config {
+            version: CONFIG_VERSION.to_string(),
             id: project_id.to_string(),
             manifest,
         };
