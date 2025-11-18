@@ -22,11 +22,14 @@ pub struct Args {
     /// Verbose
     #[arg(short = 'v', long)]
     verbose: bool,
+    /// Silent
+    #[arg(long)]
+    silent: bool,
     /// Subcommand: "downloads"
     command: String,
 }
 
-fn cleanup_downloads(dry_run: bool, verbose: bool) -> Result<()> {
+fn cleanup_downloads(dry_run: bool, verbose: bool, silent: bool) -> Result<()> {
     let current_dir = std::env::current_dir().context("Get current dir")?;
     let project = Project::open(&current_dir).context("Open project")?;
 
@@ -125,7 +128,7 @@ fn cleanup_downloads(dry_run: bool, verbose: bool) -> Result<()> {
             "Would have saved {}.",
             humanize_bytes::humanize_bytes_decimal!(total_size)
         );
-    } else if verbose {
+    } else if !silent {
         println!(
             "Deleted {}.",
             humanize_bytes::humanize_bytes_decimal!(total_size)
@@ -189,7 +192,7 @@ fn all_sources_from_modules(modules: &JsonValue) -> Result<Vec<JsonValue>> {
 pub fn run(args: Args) -> Result<()> {
     let command = args.command.as_str();
     match command {
-        "downloads" => cleanup_downloads(args.dry_run, args.verbose),
+        "downloads" => cleanup_downloads(args.dry_run, args.verbose, args.silent),
         _ => Err(Error::InvalidArgument.into()),
     }
 }
