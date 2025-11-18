@@ -83,7 +83,7 @@ fn cleanup_downloads(dry_run: bool, verbose: bool) -> Result<()> {
         .iter()
         .filter_map(|source| {
             let type_ = source.get("type")?;
-            if type_ != "archive" {
+            if type_ != "archive" && type_ != "file" {
                 return None;
             }
             let sha256 = source.get("sha256")?.as_str()?;
