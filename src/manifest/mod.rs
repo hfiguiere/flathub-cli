@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2020-2025 Hubert Figuière
+// SPDX-FileCopyrightText: 2020-2026 Hubert Figuière
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -198,7 +198,7 @@ impl Manifest {
         let sdk = {
             use PackageType::*;
             match package_type {
-                GimpPlugin => Sdk::Gnome("42".to_string()),
+                GimpPlugin => Sdk::Gnome(config::GIMP_RUNTIME_VERSION.to_string()),
                 LinuxAudioPlugin => Sdk::Freedesktop(config::FREEDESKTOP_VERSION.to_string()),
                 _ => match runtime {
                     Runtime::Freedesktop(ref s) => Sdk::Freedesktop(s.clone()),
