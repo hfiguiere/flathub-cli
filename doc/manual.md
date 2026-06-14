@@ -6,7 +6,7 @@ flathub-cli - HHelp maintaining flathub packages on Flathub
 
 flatpak-cli init [-e] [-i ID] DIRECTORY
 
-flatpak-cli cleanup [-n] [-v] COMMAND
+flatpak-cli cleanup [-n] [-v] [-d] [-a]
 
 # Description
 
@@ -16,19 +16,18 @@ flatpak-cli cleanup [-n] [-v] COMMAND
 
 ### Cleanup
 
-flatpak-cli cleanup [-n] [-v] COMMAND
+flatpak-cli cleanup [-n] [-v] [-d] [-a]
 
 Run cleanup in the current project.
 
 \-n, --dry-run: Show what will be done.
 
-\-v, --verbose: More vervose output.
+\-v, --verbose: More verbose output.
 
-COMMAND:
+\-d: Cleanup unused downloads. This is useful to remove archives that
+are no longer needed by the current manifest.
 
-- downloads: cleanup the downloads that are no longer need based on
-the manifest.
-
+\-a: Cleanup all (includes -d)
 
 ### Clone
 

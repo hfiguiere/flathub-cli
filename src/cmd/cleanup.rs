@@ -25,8 +25,12 @@ pub struct Args {
     /// Silent
     #[arg(long)]
     silent: bool,
-    /// Subcommand: "downloads"
-    command: String,
+    /// Cleanup downloads
+    #[arg(short = 'd')]
+    downloads: bool,
+    /// Cleanup all. Includes -d
+    #[arg(short = 'a')]
+    all: bool,
 }
 
 /// Result of cleanup.
@@ -189,36 +193,34 @@ fn all_sources_from_modules(modules: &JsonValue) -> Result<Vec<JsonValue>> {
 
 /// Run the command
 pub fn run(args: Args) -> Result<()> {
-    let command = args.command.as_str();
-    match command {
-        "downloads" => {
-            let r = cleanup_downloads(args.dry_run, args.verbose);
-            if let Ok(result) = r {
-                match result {
-                    CleanupResult::Success(total_size) => {
-                        if args.dry_run {
-                            println!(
-                                "Would have saved {}.",
-                                humanize_bytes::humanize_bytes_decimal!(total_size)
-                            );
-                        } else if !args.silent {
-                            println!(
-                                "Deleted {}.",
-                                humanize_bytes::humanize_bytes_decimal!(total_size)
-                            );
-                        }
-                    }
-                    CleanupResult::NothingToClean => {
-                        if !args.silent {
-                            println!("Nothing to do.");
-                        }
+    if args.all || args.downloads {
+        let r = cleanup_downloads(args.dry_run, args.verbose);
+        if let Ok(result) = r {
+            match result {
+                CleanupResult::Success(total_size) => {
+                    if args.dry_run {
+                        println!(
+                            "Would have saved {}.",
+                            humanize_bytes::humanize_bytes_decimal!(total_size)
+                        );
+                    } else if !args.silent {
+                        println!(
+                            "Deleted {}.",
+                            humanize_bytes::humanize_bytes_decimal!(total_size)
+                        );
                     }
                 }
-                Ok(())
-            } else {
-                r.map(|_| ())
+                CleanupResult::NothingToClean => {
+                    if !args.silent {
+                        println!("Nothing to do.");
+                    }
+                }
             }
+            Ok(())
+        } else {
+            r.map(|_| ())
         }
-        _ => Err(Error::InvalidArgument.into()),
+    } else {
+        Ok(())
     }
 }
