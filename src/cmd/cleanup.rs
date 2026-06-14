@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 Hubert Figuière
+// SPDX-FileCopyrightText: 2025-2026 Hubert Figuière
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -29,15 +29,25 @@ pub struct Args {
     command: String,
 }
 
-fn cleanup_downloads(dry_run: bool, verbose: bool, silent: bool) -> Result<()> {
+/// Result of cleanup.
+pub enum CleanupResult {
+    /// Cleaned up x bytes.
+    Success(u64),
+    /// Nothing to clean, like no donwloads dir.
+    NothingToClean,
+}
+
+fn cleanup_downloads(dry_run: bool, verbose: bool) -> Result<CleanupResult> {
     let current_dir = std::env::current_dir().context("Get current dir")?;
     let project = Project::open(&current_dir).context("Open project")?;
 
     // Get download dir
     let downloads_dir = current_dir.join(crate::builder::downloads_dir());
     if !downloads_dir.exists() || !downloads_dir.is_dir() {
-        eprintln!("No download dir found");
-        return Err(Error::NotFound.into());
+        if verbose {
+            println!("No downloads directory.");
+        }
+        return Ok(CleanupResult::NothingToClean);
     }
 
     // List downloads
@@ -123,19 +133,8 @@ fn cleanup_downloads(dry_run: bool, verbose: bool, silent: bool) -> Result<()> {
             std::fs::remove_file(download.1)?;
         }
     }
-    if dry_run {
-        println!(
-            "Would have saved {}.",
-            humanize_bytes::humanize_bytes_decimal!(total_size)
-        );
-    } else if !silent {
-        println!(
-            "Deleted {}.",
-            humanize_bytes::humanize_bytes_decimal!(total_size)
-        );
-    }
 
-    Ok(())
+    Ok(CleanupResult::Success(total_size))
 }
 
 fn build_download_path(current_dir: &Path, name: &str, sha: &str) -> PathBuf {
@@ -192,7 +191,34 @@ fn all_sources_from_modules(modules: &JsonValue) -> Result<Vec<JsonValue>> {
 pub fn run(args: Args) -> Result<()> {
     let command = args.command.as_str();
     match command {
-        "downloads" => cleanup_downloads(args.dry_run, args.verbose, args.silent),
+        "downloads" => {
+            let r = cleanup_downloads(args.dry_run, args.verbose);
+            if let Ok(result) = r {
+                match result {
+                    CleanupResult::Success(total_size) => {
+                        if args.dry_run {
+                            println!(
+                                "Would have saved {}.",
+                                humanize_bytes::humanize_bytes_decimal!(total_size)
+                            );
+                        } else if !args.silent {
+                            println!(
+                                "Deleted {}.",
+                                humanize_bytes::humanize_bytes_decimal!(total_size)
+                            );
+                        }
+                    }
+                    CleanupResult::NothingToClean => {
+                        if !args.silent {
+                            println!("Nothing to do.");
+                        }
+                    }
+                }
+                Ok(())
+            } else {
+                r.map(|_| ())
+            }
+        }
         _ => Err(Error::InvalidArgument.into()),
     }
 }
