@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 Hubert Figuière
+// SPDX-FileCopyrightText: 2025-2026 Hubert Figuière
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -9,6 +9,11 @@ use std::process::Command;
 use anyhow::anyhow;
 
 use crate::Result;
+
+/// Return the directory for builds, relative to the top-level.
+pub fn build_dir() -> std::path::PathBuf {
+    std::path::PathBuf::from(".flatpak-builder/build")
+}
 
 /// Return the directory for the downloads relative to the top-level.
 pub fn downloads_dir() -> std::path::PathBuf {

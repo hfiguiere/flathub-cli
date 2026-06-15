@@ -28,7 +28,10 @@ pub struct Args {
     /// Cleanup downloads
     #[arg(short = 'd')]
     downloads: bool,
-    /// Cleanup all. Includes -d
+    /// Cleanup builds
+    #[arg(short = 'b')]
+    builds: bool,
+    /// Cleanup all. Includes -d, -b
     #[arg(short = 'a')]
     all: bool,
 }
@@ -39,6 +42,50 @@ pub enum CleanupResult {
     Success(u64),
     /// Nothing to clean, like no donwloads dir.
     NothingToClean,
+}
+
+/// Cleanup lingering build directories. By default these are only
+/// left around if the module build failed, or if `--keep-build-dirs`
+/// is passed to `flatpak-builder`.
+///
+/// `dry_run` will not remove anything. `verbose` will print out more.
+fn cleanup_builds(dry_run: bool, verbose: bool) -> Result<CleanupResult> {
+    let current_dir = std::env::current_dir().context("Get current dir")?;
+    // Get build dir
+    let build_dir = current_dir.join(crate::builder::build_dir());
+    if !build_dir.exists() || !build_dir.is_dir() {
+        if verbose {
+            println!("No build directory.");
+        }
+        return Ok(CleanupResult::NothingToClean);
+    }
+
+    if let Ok(dir) = std::fs::read_dir(build_dir) {
+        for e in dir.flatten() {
+            let p = e.path();
+            let rel_path = p.strip_prefix(&current_dir).unwrap();
+            if p.is_dir() {
+                if verbose || dry_run {
+                    println!("Removing {rel_path:?}");
+                }
+                if !dry_run {
+                    std::fs::remove_dir_all(p)?;
+                }
+            } else if p.is_symlink() {
+                if verbose || dry_run {
+                    println!("Removing {rel_path:?}");
+                }
+                if !dry_run {
+                    std::fs::remove_file(p)?;
+                }
+            } else if verbose {
+                println!("Skipping {rel_path:?}");
+            }
+        }
+        return Ok(CleanupResult::Success(0));
+    }
+
+    Ok(CleanupResult::NothingToClean)
 }
 
 fn cleanup_downloads(dry_run: bool, verbose: bool) -> Result<CleanupResult> {
@@ -191,36 +238,45 @@ fn all_sources_from_modules(modules: &JsonValue) -> Result<Vec<JsonValue>> {
     Ok(sources)
 }
 
+pub fn run_builds(args: &Args) -> Result<CleanupResult> {
+    cleanup_builds(args.dry_run, args.verbose)
+}
+
+pub fn run_downloads(args: &Args) -> Result<CleanupResult> {
+    let r = cleanup_downloads(args.dry_run, args.verbose);
+    if let Ok(result) = &r {
+        match result {
+            CleanupResult::Success(total_size) => {
+                if args.dry_run {
+                    println!(
+                        "Would have saved {}.",
+                        humanize_bytes::humanize_bytes_decimal!(*total_size)
+                    );
+                } else if !args.silent {
+                    println!(
+                        "Deleted {}.",
+                        humanize_bytes::humanize_bytes_decimal!(*total_size)
+                    );
+                }
+            }
+            CleanupResult::NothingToClean => {
+                if !args.silent {
+                    println!("Nothing to do.");
+                }
+            }
+        }
+    }
+    r
+}
+
 /// Run the command
 pub fn run(args: Args) -> Result<()> {
     if args.all || args.downloads {
-        let r = cleanup_downloads(args.dry_run, args.verbose);
-        if let Ok(result) = r {
-            match result {
-                CleanupResult::Success(total_size) => {
-                    if args.dry_run {
-                        println!(
-                            "Would have saved {}.",
-                            humanize_bytes::humanize_bytes_decimal!(total_size)
-                        );
-                    } else if !args.silent {
-                        println!(
-                            "Deleted {}.",
-                            humanize_bytes::humanize_bytes_decimal!(total_size)
-                        );
-                    }
-                }
-                CleanupResult::NothingToClean => {
-                    if !args.silent {
-                        println!("Nothing to do.");
-                    }
-                }
-            }
-            Ok(())
-        } else {
-            r.map(|_| ())
-        }
-    } else {
-        Ok(())
+        run_downloads(&args)?;
     }
+    if args.all || args.builds {
+        run_builds(&args)?;
+    }
+
+    Ok(())
 }

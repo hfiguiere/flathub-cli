@@ -16,7 +16,7 @@ flatpak-cli cleanup [-n] [-v] [-d] [-a]
 
 ### Cleanup
 
-flatpak-cli cleanup [-n] [-v] [-d] [-a]
+flatpak-cli cleanup [-n] [-v] [-d] [-b] [-a]
 
 Run cleanup in the current project.
 
@@ -27,7 +27,9 @@ Run cleanup in the current project.
 \-d: Cleanup unused downloads. This is useful to remove archives that
 are no longer needed by the current manifest.
 
-\-a: Cleanup all (includes -d)
+\-b: Cleanup the build directory.
+
+\-a: Cleanup all (includes -d and -b)
 
 ### Clone
 
