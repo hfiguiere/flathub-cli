@@ -4,7 +4,6 @@
 
 use std::path::{Path, PathBuf};
 
-use anyhow::{anyhow, Context};
 use clap::Parser;
 use multimap::MultiMap;
 use serde_json::Value as JsonValue;
@@ -12,7 +11,7 @@ use url::Url;
 
 use crate::builder;
 use crate::project::Project;
-use crate::{Error, Result};
+use crate::{anyerror, error::Context, Error, Result};
 
 #[derive(Parser)]
 pub struct Args {
@@ -166,7 +165,7 @@ fn cleanup_downloads(dry_run: bool, verbose: bool) -> Result<CleanupResult> {
             }
         });
 
-    // Go through the lefover and remove them.
+    // Go through the leftovers and remove them.
     let mut total_size = 0_u64;
     for download in downloads.flat_iter() {
         let metadata = std::fs::metadata(download.1)?;
@@ -201,7 +200,7 @@ fn declared_sources(project: &Project) -> Result<Vec<JsonValue>> {
     let manifest_text =
         builder::run(&["--show-manifest", &manifest_file]).context("show manifest")?;
     if manifest_text.is_empty() {
-        return Err(anyhow!("Empty manifest"));
+        return Err(anyerror!("Empty manifest"));
     }
     // List all download. Mark them in the existing list
     let manifest: JsonValue = serde_json::from_slice(&manifest_text)
@@ -215,7 +214,7 @@ fn declared_sources(project: &Project) -> Result<Vec<JsonValue>> {
 /// Get all sources for the module JSON. This will go down recursively.
 fn all_sources_from_modules(modules: &JsonValue) -> Result<Vec<JsonValue>> {
     if !modules.is_array() {
-        return Err(anyhow!("JSON: modules not an array"));
+        return Err(anyerror!("JSON: modules not an array"));
     }
     let mut sources = vec![];
     for module in modules.as_array().unwrap() {

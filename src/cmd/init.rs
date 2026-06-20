@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023-2025 Hubert Figuière
+// SPDX-FileCopyrightText: 2023-2026 Hubert Figuière
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -39,9 +39,9 @@ pub fn run(args: Args) -> Result<()> {
     };
     let _ = match Project::create(&target_dir, &id, args.existing) {
         Err(e) => {
-            Err(match e.downcast_ref::<Error>() {
-                Some(Error::AlreadyExist(ErrorContext::Repository)) => {
-                    //            utils::help_message("The project a");
+            Err(match e.source() {
+                Error::AlreadyExist(ErrorContext::Repository) => {
+                    // utils::help_message("The project a");
                     println!("Repository already exist, use --existing to override");
                     e
                 }

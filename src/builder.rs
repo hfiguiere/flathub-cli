@@ -6,9 +6,7 @@
 
 use std::process::Command;
 
-use anyhow::anyhow;
-
-use crate::Result;
+use crate::{anyerror, Result};
 
 /// Return the directory for builds, relative to the top-level.
 pub fn build_dir() -> std::path::PathBuf {
@@ -29,7 +27,7 @@ pub fn git_dir() -> std::path::PathBuf {
 pub fn run(args: &[&str]) -> Result<Vec<u8>> {
     let output = Command::new("flatpak-builder").args(args).output()?;
     if !output.status.success() {
-        return Err(anyhow!(format!(
+        return Err(anyerror!(format!(
             "flatpak-builder error: {}",
             String::from_utf8_lossy(&output.stderr)
         )));

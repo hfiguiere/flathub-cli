@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 Hubert Figuière
+// SPDX-FileCopyrightText: 2023-2026 Hubert Figuière
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,7 +12,7 @@ mod repo;
 
 use clap::{Parser, Subcommand};
 
-use error::{Context as ErrorContext, Error, Result};
+use error::{AnyError, Error, ErrorContext, Result};
 
 #[derive(Parser)]
 struct Args {
