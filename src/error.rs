@@ -38,8 +38,8 @@ macro_rules! anyerror {
     };
 }
 
-#[derive(Debug, thiserror::Error)]
-#[error("Error {}: {}", self.source, self.context)]
+#[derive(thiserror::Error)]
+#[error("{}, {}", self.source, self.context)]
 pub struct AnyError {
     #[source]
     source: Error,
@@ -49,6 +49,14 @@ pub struct AnyError {
 impl AnyError {
     pub fn source(&self) -> &Error {
         &self.source
+    }
+}
+
+/// Implement Debug manually to use the Display for the error,
+/// unlike the default implementation.
+impl std::fmt::Debug for AnyError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+        write!(f, "{self}")
     }
 }
 
@@ -65,7 +73,7 @@ where
 }
 
 impl AnyError {
-    fn context(context: String, source: Error) -> Self {
+    pub fn context(context: String, source: Error) -> Self {
         Self { source, context }
     }
 }
